@@ -1,0 +1,124 @@
+---
+title: "WK10HW"
+author: "Chiranjeevi Mallavarapu"
+date: "7/20/2017"
+output: 
+  html_document: 
+    keep_md: yes
+---
+
+# This is HW10 for Week 10
+
+---
+
+# Load the required library
+
+```{r }
+library(ggplot2)
+```
+# 1) Load data from	http://stat.columbia.edu/~rachel/datasets/nyt1.csv
+
+
+```{r }
+knitr::opts_chunk$set(echo = TRUE, include = TRUE)
+fileLocation <- "http://stat.columbia.edu/~rachel/datasets/nyt1.csv"
+data1 <- read.csv(url(fileLocation))
+```
+
+# 2) Create a new variable ageGroup that categorizes age into following groups: < 18, 18–24, 25–34, 35–44, 45–54, 55–64 and 65+.
+
+```{r }
+knitr::opts_chunk$set(echo = TRUE, include = TRUE)
+data1$ageGroup  <- cut(data1$Age, c(-Inf, 18, 24, 34, 44, 54, 64, Inf))
+levels(data1$ageGroup) <- c("<18", "18-24", "25-34", "35-44", "45-54", "55-64", "65+")
+head(data1)
+```
+
+# 3) Use sub set of data called “ImpSub” where Impressions > 0 ) in your data set.
+
+
+```{r }
+knitr::opts_chunk$set(echo = TRUE, include = TRUE)
+ImpSub <- subset(data1, Impressions>0)
+summary(ImpSub)
+
+```
+
+# 4) Create a new variable called click-through-rate (CTR = click/impression).
+
+
+```{r }
+knitr::opts_chunk$set(echo = TRUE, include = TRUE)
+ImpSub$CTR <- ImpSub$Clicks/ImpSub$Impressions
+head(ImpSub)
+```
+
+# 5) Plot distributions of number impressions and click-through-rate (CTR = click/impression) for the age groups.
+
+
+```{r }
+knitr::opts_chunk$set(echo = TRUE, include = TRUE)
+ggplot(ImpSub, aes(x=Impressions, fill=ageGroup))+   labs(title="Impressions by age group")+geom_histogram(binwidth=1)
+ggplot(ImpSub, aes(x=CTR, fill=ageGroup))+   labs(title="CTR by age group")+geom_histogram(binwidth=0.1)
+
+```
+
+# 6) Define a new variable to segment users based on click -through-rate (CTR) behavior CTR< 0.2, 0.2<=CTR <0.4, 0.4<= CTR<0.6, 0.6<=CTR<0.8, CTR>0.8	
+
+```{r }
+knitr::opts_chunk$set(echo = TRUE, include = TRUE)
+ImpSub$CTR_Group <- cut(ImpSub$CTR, c(-Inf,0.2, 0.4,0.6, 0.8, Inf),right = FALSE)
+levels(ImpSub$CTR_Group) <- c("<0.2", "0.2-0.4", "0.4-0.6", "0.6-0.8", "0.8+")
+head(ImpSub)
+```
+
+# 7) Get the total number of Male, Impressions, Clicks and Signed_In (0=Female, 1=Male)
+
+```{r }
+knitr::opts_chunk$set(echo = TRUE, include = TRUE)
+sapply(ImpSub[,c(2,3,4,5)],sum)
+```
+
+# 8) Get the mean of Age, Impressions, Clicks, CTR and percentage of males and signed_In 
+
+```{r }
+knitr::opts_chunk$set(echo = TRUE, include = TRUE)
+sapply(ImpSub[,c(1,2,3,4,5,7)],mean)
+```
+
+# 9) Get the means of Impressions, Clicks, CTR and percentage of males and signed_In  by AgeGroup.
+
+
+```{r }
+knitr::opts_chunk$set(echo = TRUE, include = TRUE)
+aggregate(ImpSub[,c(2,3,4,5,7)], by=list(Category=ImpSub$ageGroup), FUN=mean)
+
+```
+
+# 10) Create a table of CTRGroup vs AgeGroup counts.
+
+
+```{r }
+knitr::opts_chunk$set(echo = TRUE, include = TRUE)
+CountAgeGrp.tab <- table(ImpSub$ageGroup,ImpSub$CTR_Group)
+CountAgeGrp.tab
+```
+
+# 11) Plot distributions of number impressions and click-through-rate (CTR = click/impression) for the age groups
+
+
+```{r }
+knitr::opts_chunk$set(echo = TRUE, include = TRUE)
+# Pls. refer to question 5)
+```
+
+# 12) One more plot you think which is important to look at.I am choosing to plot count of count by Age filled by CTR to is which age is most active 
+
+```{r }
+knitr::opts_chunk$set(echo = TRUE, include = TRUE)
+AgeClickNZ <- ImpSub[ImpSub$Age >0 & ImpSub$CTR >0,]
+ggplot(AgeClickNZ, aes(x=Age, fill=CTR_Group))+   labs(title="Counts by age filled in with CTR")+geom_histogram(binwidth=5)
+
+```
+
+## Seems like mostly people aged 60 years are highly active 
