@@ -4,7 +4,7 @@ author: "Chiranjeevi Mallavarapu"
 date: "7/20/2017"
 output: 
   html_document: 
-    keep_md: true
+    keep_md: yes
 ---
 
 # This is HW10 for Week 10
